@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	_ "github.com/heroku/x/hmetrics/onload"
 	"net"
 	"net/http"
 	"os"

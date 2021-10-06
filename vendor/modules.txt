@@ -1,4 +1,0 @@
-# github.com/heroku/x v0.0.32
-## explicit
-github.com/heroku/x/hmetrics
-github.com/heroku/x/hmetrics/onload
