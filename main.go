@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	_ "github.com/heroku/x/hmetrics/onload"
-	"log"
 	"net"
 	"net/http"
 	"os"
@@ -34,7 +33,8 @@ func main() {
 	port := os.Getenv("PORT")
 
 	if port == "" {
-		log.Fatal("$PORT must be set")
+		port = "4000"
+		//log.Fatal("$PORT must be set")
 	}
 
 	addr := "0.0.0.0:" + port
