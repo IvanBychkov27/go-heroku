@@ -41,7 +41,7 @@ func main() {
 
 	ln, err := net.Listen("tcp", addr)
 	if err != nil {
-		fmt.Println("error create main listener: ", err)
+		fmt.Println("error create go-heroku listener: ", err)
 	}
 	defer ln.Close()
 
@@ -79,7 +79,7 @@ func (app *Application) stopServer() {
 	fmt.Println("stop server...")
 	err := app.server.Shutdown(context.Background())
 	if err != nil {
-		fmt.Println("error stop main server:", err.Error())
+		fmt.Println("error stop go-heroku server:", err.Error())
 	}
 }
 
