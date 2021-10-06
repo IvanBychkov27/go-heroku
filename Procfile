@@ -1,1 +1,1 @@
-web: bin/go-heroku
+web: main
