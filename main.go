@@ -37,7 +37,7 @@ func main() {
 		log.Fatal("$PORT must be set")
 	}
 
-	addr := "127.0.0.1:" + port
+	addr := "0.0.0.0:" + port
 
 	ln, err := net.Listen("tcp", addr)
 	if err != nil {
@@ -66,7 +66,7 @@ func (app *Application) run(cancel context.CancelFunc, wg *sync.WaitGroup, ln ne
 	defer wg.Done()
 	defer cancel()
 
-	fmt.Println("start main listen address", ln.Addr().String())
+	fmt.Println("start server listen address", ln.Addr().String())
 
 	err := app.server.Serve(ln)
 	if err != nil && err.Error() != "http: Server closed" {
