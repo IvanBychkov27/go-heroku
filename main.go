@@ -49,28 +49,26 @@ func main() {
 }
 
 func mainHandler(c *gin.Context) {
-	fileName := "index.tmpl.html"
-
 	nPlayers := c.Request.URL.Query().Get("nPlayers")
+	data := buildResultData(nPlayers)
 
-	fmt.Println("nPlayers =", nPlayers)
-
-	saveFileHTML(fileName, nPlayers)
+	fileName := "index.tmpl.html"
+	saveFileHTML("templates/"+fileName, data)
 	c.HTML(200, fileName, nil)
 }
 
-func saveFileHTML(fileName, nPlayers string) {
+func buildResultData(nPlayers string) []byte {
 	t := time.Now().Format("02.01.2006  15:04:05")
 	if nPlayers == "" {
 		nPlayers = "1"
 	}
-
 	dForm := strings.Replace(form, "{nPlayers}", nPlayers, 1)
-
 	res := docStart + "<H1> Heroku time: " + t + " </H1> <br><br> <H3>Кол-во игроков: " + nPlayers + "</H3> <br> " + dForm + docEnd
+	return []byte(res)
+}
 
-	fileName = "templates/" + fileName
-	err := ioutil.WriteFile(fileName, []byte(res), 0777)
+func saveFileHTML(fileName string, data []byte) {
+	err := ioutil.WriteFile(fileName, data, 0777)
 	if err != nil {
 		fmt.Println("error write file ", fileName)
 	}
