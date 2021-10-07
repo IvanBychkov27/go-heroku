@@ -1,8 +1,10 @@
 package main
 
 import (
+	"encoding/base64"
 	"fmt"
 	"io/ioutil"
+	"math/rand"
 	"os"
 	"strings"
 	"time"
@@ -29,12 +31,14 @@ const (
 	<br>
 	<p> <button type="submit">Отправить</button></p>
 </form>
+<br><br>
 `
 	button = `<p> <button type="submit">Отправить</button>`
 	docEnd = `</body></html>`
 )
 
 func main() {
+	rand.Seed(time.Now().UTC().UnixNano())
 	port := os.Getenv("PORT")
 	if port == "" {
 		fmt.Println("$PORT must be set")
@@ -63,7 +67,10 @@ func buildResultData(nPlayers string) []byte {
 		nPlayers = "1"
 	}
 	dForm := strings.Replace(form, "{nPlayers}", nPlayers, 1)
-	res := docStart + "<H1> Heroku time: " + t + " </H1> <br><br> <H3>Кол-во игроков: " + nPlayers + "</H3> <br> " + dForm + docEnd
+	res := docStart + "<H1> Heroku time: " + t + " </H1> <br><br> <H3>Кол-во игроков: " + nPlayers + "</H3> <br> " + dForm
+	res += cardsImage(5) // вывод 5ти карт без повторов
+	res += docEnd
+
 	return []byte(res)
 }
 
@@ -72,4 +79,49 @@ func saveFileHTML(fileName string, data []byte) {
 	if err != nil {
 		fmt.Println("error write file ", fileName)
 	}
+}
+
+func cardsImage(n int) string {
+	var res string
+	temp := make(map[string]struct{})
+	for i := 0; i < n; i++ {
+		card := randomCard()
+		_, ok := temp[card]
+		if !ok {
+			res += imageData(card)
+			temp[card] = struct{}{}
+		} else {
+			i--
+		}
+	}
+	return res
+}
+
+func imageData(cardName string) string {
+	openFileName := "cardImage/" + cardName + ".jpg"
+	fileData, err := ioutil.ReadFile(openFileName)
+	if err != nil {
+		fmt.Println("error open file", err.Error())
+		return openFileName
+	}
+	return `<img src="data:image/jpg; base64,` + base64.StdEncoding.EncodeToString(fileData) + `">`
+}
+
+func randomCard() string {
+	cards := []string{
+		"21", "22", "23", "24",
+		"31", "32", "33", "34",
+		"41", "42", "43", "44",
+		"51", "52", "53", "54",
+		"61", "62", "63", "64",
+		"71", "72", "73", "74",
+		"81", "82", "83", "84",
+		"91", "92", "93", "94",
+		"101", "102", "103", "104",
+		"111", "112", "113", "114",
+		"121", "122", "123", "124",
+		"131", "132", "133", "134",
+		"141", "142", "143", "144",
+	}
+	return cards[rand.Intn(len(cards))]
 }
