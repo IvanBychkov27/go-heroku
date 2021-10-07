@@ -4,19 +4,35 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/heroku/x/hmetrics/onload"
 )
 
-const doc = `
+const (
+	docStart = `
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Go-heroku</title>
+<body>
 `
+	form = `
+<form action="/" method="GET">
+	<br>
+	<p>Количество соперников:
+	    <input type="number" name="nPlayers" value="{nPlayers}"  min="1" max="15" size="1" step="1">
+	</p>
+	<br>
+	<p> <button type="submit">Отправить</button></p>
+</form>
+`
+	button = `<p> <button type="submit">Отправить</button>`
+	docEnd = `</body></html>`
+)
 
 func main() {
 	port := os.Getenv("PORT")
@@ -34,13 +50,24 @@ func main() {
 
 func mainHandler(c *gin.Context) {
 	fileName := "index.tmpl.html"
-	saveFileHTML(fileName)
+
+	nPlayers := c.Request.URL.Query().Get("nPlayers")
+
+	fmt.Println("nPlayers =", nPlayers)
+
+	saveFileHTML(fileName, nPlayers)
 	c.HTML(200, fileName, nil)
 }
 
-func saveFileHTML(fileName string) {
-	t := time.Now().Format("02:04:06 15:04:05")
-	res := doc + "<body><H1> Heroku time: " + t + " </H1></body></html>"
+func saveFileHTML(fileName, nPlayers string) {
+	t := time.Now().Format("02.01.2006  15:04:05")
+	if nPlayers == "" {
+		nPlayers = "1"
+	}
+
+	dForm := strings.Replace(form, "{nPlayers}", nPlayers, 1)
+
+	res := docStart + "<H1> Heroku time: " + t + " </H1> <br><br> <H3>Кол-во игроков: " + nPlayers + "</H3> <br> " + dForm + docEnd
 
 	fileName = "templates/" + fileName
 	err := ioutil.WriteFile(fileName, []byte(res), 0777)
