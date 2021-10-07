@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"math/rand"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -25,7 +26,7 @@ const (
 	form = `
 <form action="/" method="GET">
 	<br>
-	<p>Количество соперников:
+	<p>Количество карт:
 	    <input type="number" name="nPlayers" value="{nPlayers}"  min="1" max="15" size="1" step="1">
 	</p>
 	<br>
@@ -66,8 +67,9 @@ func buildResultData(nPlayers string) []byte {
 		nPlayers = "1"
 	}
 	dForm := strings.Replace(form, "{nPlayers}", nPlayers, 1)
-	res := docStart + "<H1> Heroku time: " + timeNow(3) + " </H1> <br><br> <H3>Кол-во игроков: " + nPlayers + "</H3> <br> " + dForm
-	res += cardsImage(5) // вывод 5ти карт без повторов
+	res := docStart + "<H1> Heroku time: " + timeNow(3) + " </H1> <br><br> <H3>Кол-во карт: " + nPlayers + "</H3> <br> " + dForm
+	nCards, _ := strconv.Atoi(nPlayers)
+	res += cardsImage(nCards) // вывод 5ти карт без повторов
 	res += docEnd
 
 	return []byte(res)
