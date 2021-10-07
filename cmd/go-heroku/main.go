@@ -29,7 +29,7 @@ const (
 	    <input type="number" name="nPlayers" value="{nPlayers}"  min="1" max="15" size="1" step="1">
 	</p>
 	<br>
-	<p> <button type="submit">Отправить</button></p>
+	<p> <button type="submit">Раздать карты</button></p>
 </form>
 <br><br>
 `
@@ -62,12 +62,11 @@ func mainHandler(c *gin.Context) {
 }
 
 func buildResultData(nPlayers string) []byte {
-	t := time.Now().Format("02.01.2006  15:04:05")
 	if nPlayers == "" {
 		nPlayers = "1"
 	}
 	dForm := strings.Replace(form, "{nPlayers}", nPlayers, 1)
-	res := docStart + "<H1> Heroku time: " + t + " </H1> <br><br> <H3>Кол-во игроков: " + nPlayers + "</H3> <br> " + dForm
+	res := docStart + "<H1> Heroku time: " + timeNow(3) + " </H1> <br><br> <H3>Кол-во игроков: " + nPlayers + "</H3> <br> " + dForm
 	res += cardsImage(5) // вывод 5ти карт без повторов
 	res += docEnd
 
@@ -124,4 +123,14 @@ func randomCard() string {
 		"141", "142", "143", "144",
 	}
 	return cards[rand.Intn(len(cards))]
+}
+
+func timeNow(addHour int) string {
+	y := time.Now().Year()
+	mec := time.Now().Month()
+	d := time.Now().Day()
+	h := time.Now().Hour() + addHour
+	m := time.Now().Minute()
+	s := time.Now().Second()
+	return time.Date(y, mec, d, h, m, s, 0, time.UTC).Format("02.01.2006  15:04:05")
 }
